@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Records</title>
+</head>
+<body>
+
+    <h2>Book Records</h2>
+
+    <label for="bookSelect">Select a Book:</label>
+
+    <select id="bookSelect" onchange="displayBook()">
+        <option value="">-- Select a Book --</option>
+    </select>
+
+    <div id="bookDetails"></div>
+
+    <script>
+        let books = [];
+
+        // Fetch JSON data from GitHub
+        fetch("https://github.com/wisshh00/Web-Dev/blob/main/books.json")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to load JSON");
+                }
+                return response.json();
+            })
+            .then(data => {
+                books = data.Books;
+
+                let select = document.getElementById("bookSelect");
+
+                books.forEach(book => {
+                    let option = document.createElement("option");
+                    option.value = book.title;
+                    option.textContent = book.title;
+                    select.appendChild(option);
+                });
+            })
+            .catch(error => {
+                document.getElementById("bookDetails").innerHTML =
+                    "<p>Unable to load book records.</p>";
+                console.log(error);
+            });
+
+        // Display selected book details
+        function displayBook() {
+            let title = document.getElementById("bookSelect").value;
+
+            let book = books.find(book => book.title === title);
+
+            let details = document.getElementById("bookDetails");
+
+            if (book) {
+                details.innerHTML =
+                    "<h3>Book Details</h3>" +
+                    "<p>Title: " + book.title + "</p>" +
+                    "<p>Author: " + book.author + "</p>" +
+                    "<p>Publication Year: " + book.publicationYear + "</p>" +
+                    "<p>Genres: " + book.genres.join(", ") + "</p>";
+            } else {
+                details.innerHTML = "<p>No book found.</p>";
+            }
+        }
+    </script>
+
+</body>
+</html>
